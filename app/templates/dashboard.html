@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Patch Adams</title>
+    <meta http-equiv="refresh" content="10" />
+    <style>
+      :root {
+        --bg: #f5f5f7;
+        --surface: #ffffff;
+        --surface-sunken: #fbfbfd;
+        --hairline: rgba(0, 0, 0, 0.08);
+        --hairline-soft: rgba(0, 0, 0, 0.05);
+        --text: #1d1d1f;
+        --text-2: #6e6e73;
+        --text-3: #86868b;
+        --accent: #0071e3;
+        --accent-press: #0066cc;
+        --green: #248a3d;
+        --amber: #b25000;
+        --red: #c9201a;
+        --shadow-card:
+          0 1px 1px rgba(0, 0, 0, 0.03), 0 6px 20px rgba(0, 0, 0, 0.05);
+        --ease: cubic-bezier(0.4, 0, 0.2, 1);
+        --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+        --radius: 20px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+          "Helvetica Neue", system-ui, sans-serif;
+        margin: 0;
+        padding: 56px 24px 80px;
+        color: var(--text);
+        background:
+          radial-gradient(
+            1100px 460px at 50% -8%,
+            #ffffff,
+            rgba(255, 255, 255, 0) 72%
+          ),
+          var(--bg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: "ss01", "cv01";
+      }
+
+      .wrap {
+        margin: 0 auto;
+        max-width: 1100px;
+      }
+
+      /* ---------- Header ---------- */
+      header.page {
+        margin-bottom: 36px;
+      }
+
+      header.page h1 {
+        margin: 0;
+      }
+
+      .brand-logo {
+        display: block;
+        height: auto;
+        max-width: min(252px, 100%);
+      }
+
+      header.page p {
+        color: var(--text-2);
+        font-size: 16px;
+        letter-spacing: -0.01em;
+        margin: 8px 0 0;
+      }
+
+      /* ---------- Metrics ---------- */
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 14px;
+        margin-bottom: 36px;
+      }
+
+      .metric {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 16px;
+        box-shadow: var(--shadow-card);
+        padding: 18px 20px;
+      }
+
+      .metric .value {
+        font-size: 30px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.03em;
+        line-height: 1;
+      }
+
+      .metric .label {
+        color: var(--text-3);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        margin-top: 9px;
+      }
+
+      /* ---------- Panel / table ---------- */
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-card);
+        overflow: hidden;
+      }
+
+      .row-grid {
+        align-items: center;
+        display: grid;
+        gap: 18px;
+        grid-template-columns: 18px minmax(0, 2.5fr) minmax(0, 1.15fr) minmax(
+            0,
+            0.95fr
+          );
+      }
+
+      .head {
+        border-bottom: 1px solid var(--hairline);
+        padding: 14px 24px;
+      }
+
+      .head .col {
+        color: var(--text-3);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      details.run + details.run {
+        border-top: 1px solid var(--hairline-soft);
+      }
+
+      summary.run-summary {
+        cursor: pointer;
+        list-style: none;
+        outline: none;
+        padding: 17px 24px;
+        transition: background 0.18s var(--ease);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      summary.run-summary::-webkit-details-marker {
+        display: none;
+      }
+      summary.run-summary:hover {
+        background: var(--surface-sunken);
+      }
+      details.run[open] > summary.run-summary {
+        background: var(--surface-sunken);
+      }
+
+      .chevron {
+        color: var(--text-3);
+        display: inline-flex;
+        transition:
+          transform 0.32s var(--spring),
+          color 0.18s var(--ease);
+      }
+      details.run[open] .chevron {
+        transform: rotate(90deg);
+        color: var(--text-2);
+      }
+      summary.run-summary:hover .chevron {
+        color: var(--text-2);
+      }
+
+      .issue-num {
+        color: var(--accent);
+        font-size: 15px;
+        font-weight: 590;
+        letter-spacing: -0.01em;
+        text-decoration: none;
+      }
+      .issue-num:hover {
+        text-decoration: underline;
+      }
+
+      .issue-title {
+        color: var(--text-2);
+        font-size: 13px;
+        letter-spacing: -0.005em;
+        margin-top: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .cell-muted {
+        color: var(--text-3);
+        font-size: 13px;
+      }
+
+      /* ---------- Capsule badges ---------- */
+      .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .badge {
+        border-radius: 980px;
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 560;
+        letter-spacing: -0.003em;
+        line-height: 1;
+        padding: 5px 11px;
+        white-space: nowrap;
+      }
+
+      .badge.neutral {
+        background: rgba(120, 120, 128, 0.12);
+        color: var(--text-2);
+      }
+      .badge.info {
+        background: rgba(0, 113, 227, 0.12);
+        color: var(--accent-press);
+      }
+      .badge.success {
+        background: rgba(52, 199, 89, 0.16);
+        color: var(--green);
+      }
+      .badge.warn {
+        background: rgba(255, 149, 0, 0.18);
+        color: var(--amber);
+      }
+      .badge.danger {
+        background: rgba(255, 59, 48, 0.14);
+        color: var(--red);
+      }
+
+      /* ---------- Current step pill ---------- */
+      .step-pill {
+        align-items: center;
+        color: var(--text);
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 500;
+        gap: 8px;
+        letter-spacing: -0.005em;
+      }
+
+      .dot {
+        border-radius: 980px;
+        flex: none;
+        height: 8px;
+        width: 8px;
+      }
+      .dot.active {
+        background: var(--accent);
+        box-shadow: 0 0 0 0 rgba(0, 113, 227, 0.5);
+        animation: ring 1.8s var(--ease) infinite;
+      }
+      .dot.done {
+        background: #34c759;
+      }
+      .dot.idle {
+        background: #c7c7cc;
+      }
+
+      @keyframes ring {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 113, 227, 0.45);
+        }
+        70% {
+          box-shadow: 0 0 0 6px rgba(0, 113, 227, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 113, 227, 0);
+        }
+      }
+
+      .session-link {
+        align-items: center;
+        color: var(--accent);
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 530;
+        gap: 5px;
+        letter-spacing: -0.005em;
+        text-decoration: none;
+      }
+      .session-link:hover {
+        text-decoration: underline;
+      }
+
+      /* ---------- Accordion body (animated height) ---------- */
+      .body-wrap {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.36s var(--ease);
+      }
+      details.run[open] .body-wrap {
+        grid-template-rows: 1fr;
+      }
+      .body-inner {
+        overflow: hidden;
+      }
+
+      .run-body {
+        background: var(--surface-sunken);
+        border-top: 1px solid var(--hairline);
+        padding: 26px 24px 28px;
+      }
+
+      .body-grid {
+        display: grid;
+        gap: 34px;
+        grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+      }
+
+      /* ---------- Timeline ---------- */
+      .timeline {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .step {
+        align-items: center;
+        color: var(--text-3);
+        display: flex;
+        font-size: 13.5px;
+        gap: 13px;
+        letter-spacing: -0.006em;
+        padding: 7px 0;
+        position: relative;
+      }
+
+      .step::before {
+        background: #e3e3e6;
+        content: "";
+        left: 8px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+      }
+      .step:first-child::before {
+        top: 50%;
+      }
+      .step:last-child::before {
+        bottom: 50%;
+      }
+
+      .node {
+        background: var(--surface);
+        border: 2px solid #d2d2d7;
+        border-radius: 50%;
+        flex: none;
+        height: 18px;
+        position: relative;
+        width: 18px;
+        z-index: 1;
+      }
+
+      .step.completed {
+        color: var(--text);
+      }
+      .step.completed .node {
+        background: #34c759;
+        border-color: #34c759;
+      }
+      .step.completed .node::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 4px;
+        height: 8px;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: rotate(43deg);
+      }
+
+      .step.active {
+        color: var(--text);
+        font-weight: 560;
+      }
+      .step.active .node {
+        background: var(--accent);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.16);
+      }
+      .step.active .node::after {
+        content: "";
+        position: absolute;
+        inset: 2px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        animation: node-spin 0.7s linear infinite;
+      }
+      @keyframes node-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .step.failed {
+        color: var(--red);
+        font-weight: 560;
+      }
+      .step.failed .node {
+        background: #ff3b30;
+        border-color: #ff3b30;
+        box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.14);
+      }
+      .step.failed .node::before,
+      .step.failed .node::after {
+        background: #fff;
+        border-radius: 1px;
+        content: "";
+        height: 2px;
+        left: 4px;
+        position: absolute;
+        top: 6px;
+        width: 6px;
+      }
+      .step.failed .node::before {
+        transform: rotate(45deg);
+      }
+      .step.failed .node::after {
+        transform: rotate(-45deg);
+      }
+
+      /* ---------- Working indicator ---------- */
+      .working {
+        align-items: center;
+        color: var(--accent);
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 560;
+        gap: 8px;
+      }
+      .working .dots {
+        display: inline-flex;
+        gap: 3px;
+      }
+      .working .dots i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--accent);
+        animation: dot-pulse 1.2s ease-in-out infinite;
+      }
+      .working .dots i:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .working .dots i:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes dot-pulse {
+        0%,
+        80%,
+        100% {
+          opacity: 0.25;
+          transform: translateY(0);
+        }
+        40% {
+          opacity: 1;
+          transform: translateY(-2px);
+        }
+      }
+
+      /* ---------- Facts ---------- */
+      .facts {
+        display: grid;
+        gap: 18px 30px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .fact .k {
+        color: var(--text-3);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      .fact .v {
+        color: var(--text);
+        font-size: 14.5px;
+        letter-spacing: -0.008em;
+        line-height: 1.4;
+        word-break: break-word;
+      }
+      .fact .v a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .fact .v a:hover {
+        text-decoration: underline;
+      }
+
+      .prose {
+        color: #3a3a3c;
+        font-size: 14.5px;
+        letter-spacing: -0.008em;
+        line-height: 1.55;
+        margin: 18px 0 0;
+      }
+      .prose strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      .prose .prose-label {
+        color: var(--text);
+        font-weight: 600;
+        margin: 0 0 4px;
+      }
+      .markdown p {
+        margin: 0 0 10px;
+      }
+      .markdown p:last-child {
+        margin-bottom: 0;
+      }
+      .markdown ul,
+      .markdown ol {
+        margin: 0 0 10px;
+        padding-left: 20px;
+      }
+      .markdown li {
+        margin: 2px 0;
+      }
+      .markdown code {
+        background: rgba(120, 120, 128, 0.12);
+        border-radius: 5px;
+        font-family: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        padding: 1px 5px;
+      }
+      .markdown pre {
+        background: var(--surface-sunken);
+        border-radius: 8px;
+        overflow-x: auto;
+        padding: 12px 14px;
+      }
+      .markdown pre code {
+        background: none;
+        padding: 0;
+      }
+      .markdown a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .markdown a:hover {
+        text-decoration: underline;
+      }
+
+      .callout {
+        border-radius: 14px;
+        font-size: 13.5px;
+        line-height: 1.5;
+        margin-top: 18px;
+        padding: 14px 16px;
+      }
+      .callout.blocker {
+        background: rgba(255, 59, 48, 0.08);
+        border: 1px solid rgba(255, 59, 48, 0.18);
+        color: var(--red);
+      }
+      .callout.blocker strong {
+        color: var(--red);
+      }
+      .callout.waiting {
+        background: rgba(255, 149, 0, 0.09);
+        border: 1px solid rgba(255, 149, 0, 0.22);
+        color: var(--amber);
+      }
+      .callout.waiting strong {
+        color: var(--amber);
+      }
+      .callout .sub {
+        color: #3a3a3c;
+        margin-top: 4px;
+      }
+      .callout-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .button {
+        background: var(--accent);
+        border: none;
+        border-radius: 980px;
+        color: #fff;
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 590;
+        letter-spacing: -0.01em;
+        margin-top: 12px;
+        padding: 9px 18px;
+        transition:
+          background 0.18s var(--ease),
+          transform 0.12s var(--ease);
+      }
+      .button:hover {
+        background: var(--accent-press);
+      }
+      .button:active {
+        transform: scale(0.97);
+      }
+      .button.retry {
+        background: var(--red);
+        margin-top: 0;
+      }
+      .button.retry:hover {
+        background: #d70015;
+      }
+
+      /* Primary "open in Devin" action at the top of an expanded run */
+      .body-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 22px;
+      }
+
+      .btn-devin {
+        align-items: center;
+        background: var(--accent);
+        border-radius: 980px;
+        color: #fff;
+        display: inline-flex;
+        font-size: 13px;
+        font-weight: 590;
+        gap: 7px;
+        letter-spacing: -0.01em;
+        padding: 9px 16px;
+        text-decoration: none;
+        transition:
+          background 0.18s var(--ease),
+          transform 0.12s var(--ease);
+      }
+      .btn-devin:hover {
+        background: var(--accent-press);
+      }
+      .btn-devin:active {
+        transform: scale(0.97);
+      }
+
+      .links {
+        border-top: 1px solid var(--hairline-soft);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 22px;
+        margin-top: 22px;
+        padding-top: 18px;
+      }
+
+      .events {
+        margin-top: 14px;
+      }
+      .events > summary {
+        color: var(--text-2);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 540;
+        letter-spacing: -0.005em;
+        list-style: none;
+        padding: 6px 0;
+        transition: color 0.15s var(--ease);
+      }
+      .events > summary:hover {
+        color: var(--text);
+      }
+      .events > summary::-webkit-details-marker {
+        display: none;
+      }
+      .events > summary::before {
+        content: "›";
+        color: var(--text-3);
+        display: inline-block;
+        margin-right: 7px;
+        transition: transform 0.24s var(--spring);
+      }
+      .events[open] > summary::before {
+        transform: rotate(90deg);
+      }
+
+      .event-list {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+      }
+      .event-list li {
+        border-left: 2px solid var(--hairline);
+        color: #3a3a3c;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-left: 3px;
+        padding: 7px 0 7px 16px;
+      }
+      .event-list .time {
+        color: var(--text-3);
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      code {
+        background: rgba(120, 120, 128, 0.12);
+        border-radius: 6px;
+        font-family: "SF Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        padding: 2px 6px;
+      }
+      code.evt.neutral {
+        background: rgba(120, 120, 128, 0.12);
+        color: var(--text-2);
+      }
+      code.evt.info {
+        background: rgba(0, 113, 227, 0.12);
+        color: var(--accent-press);
+      }
+      code.evt.success {
+        background: rgba(52, 199, 89, 0.16);
+        color: var(--green);
+      }
+      code.evt.warn {
+        background: rgba(255, 149, 0, 0.18);
+        color: var(--amber);
+      }
+      code.evt.danger {
+        background: rgba(255, 59, 48, 0.14);
+        color: var(--red);
+      }
+
+      .empty {
+        color: var(--text-2);
+        font-size: 15px;
+        letter-spacing: -0.01em;
+        padding: 56px 24px;
+        text-align: center;
+      }
+
+      /* ---------- One-time entrance (skipped on auto-refresh) ---------- */
+      .po-animate .metric,
+      .po-animate details.run {
+        animation: rise 0.6s var(--ease) both;
+      }
+      .po-animate .metric:nth-child(2) {
+        animation-delay: 0.04s;
+      }
+      .po-animate .metric:nth-child(3) {
+        animation-delay: 0.08s;
+      }
+      .po-animate .metric:nth-child(4) {
+        animation-delay: 0.12s;
+      }
+      .po-animate .metric:nth-child(5) {
+        animation-delay: 0.16s;
+      }
+      .po-animate details.run:nth-of-type(1) {
+        animation-delay: 0.06s;
+      }
+      .po-animate details.run:nth-of-type(2) {
+        animation-delay: 0.12s;
+      }
+      .po-animate details.run:nth-of-type(3) {
+        animation-delay: 0.18s;
+      }
+      .po-animate details.run:nth-of-type(n + 4) {
+        animation-delay: 0.22s;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Suppress accordion height transition on initial paint / auto-refresh */
+      .preload .body-wrap {
+        transition: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      @media (max-width: 880px) {
+        body {
+          padding: 36px 16px 56px;
+        }
+        .brand-logo {
+          max-width: min(192px, 100%);
+        }
+        .head {
+          display: none;
+        }
+        .row-grid {
+          grid-template-columns: 18px 1fr;
+          gap: 6px 12px;
+        }
+        .row-grid > .span-mobile {
+          grid-column: 2;
+        }
+        .row-grid > .span-mobile + .span-mobile {
+          margin-top: 2px;
+        }
+        .body-grid {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body class="preload">
+    <div class="wrap">
+      <header class="page">
+        <h1>
+          <img class="brand-logo" src="/assets/logo.png" alt="Patch Adams" />
+        </h1>
+        <p>Autonomous issue triage, remediation, and review control plane</p>
+      </header>
+
+      {% set status_labels = { "received": "Received", "triage_started":
+      "Triaging", "triage_completed": "Triage complete", "remediation_started":
+      "Fixing", "pr_created": "PR opened", "review_started": "Under
+      review", "review_completed": "Review complete", "report_ready": "Report
+      ready", "verified": "Verified", "failed": "Failed", "needs_human": "Needs
+      human", "ignored": "Ignored" } %} {% set status_tones = { "received":
+      "neutral", "triage_started": "info", "triage_completed": "info",
+      "remediation_started": "info", "pr_created": "info", "review_started":
+      "info", "review_completed": "info", "report_ready": "success", "verified":
+      "success", "failed": "danger", "needs_human": "warn", "ignored": "neutral"
+      } %} {% set event_tones = { "received": "info", "duplicate_trigger":
+      "neutral", "triage_started": "info", "triage_completed": "info",
+      "remediation_started": "info", "remediation_blocked": "warn",
+      "remediation_failed": "danger", "pr_created": "info", "review_started":
+      "info", "review_completed": "info", "review_failed": "danger",
+      "report_ready": "success", "verified": "success", "human_continued":
+      "warn", "hard_issue_needs_human": "warn", "hard_issue_comment_posted":
+      "success", "hard_issue_comment_failed": "danger",
+      "hard_issue_comment_skipped": "warn", "needs_human": "warn", "failed":
+      "danger" } %} {% set decision_tones = {"autofix": "success",
+      "needs_human": "warn", "ignore": "neutral"} %} {% set decision_labels =
+      {"autofix": "Autofix", "needs_human": "Needs human", "ignore": "Ignore"}
+      %} {% set risk_tones = {"low": "success", "medium": "warn", "high":
+      "danger", "hard": "danger"} %}
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="value">{{ metrics.total }}</div>
+          <div class="label">Total runs</div>
+        </div>
+        <div class="metric">
+          <div class="value">{{ metrics.prs_opened }}</div>
+          <div class="label">PRs opened</div>
+        </div>
+        <div class="metric">
+          <div class="value">{{ metrics.reviews_completed }}</div>
+          <div class="label">Reviews</div>
+        </div>
+        <div class="metric">
+          <div class="value">{{ metrics.videos }}</div>
+          <div class="label">Videos</div>
+        </div>
+        <div class="metric">
+          <div class="value">{{ metrics.failures }}</div>
+          <div class="label">Failures</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        {% if runs %}
+        <div class="head">
+          <div class="row-grid">
+            <span class="col"></span>
+            <span class="col">Issue</span>
+            <span class="col">Status</span>
+            <span class="col">Devin session</span>
+          </div>
+        </div>
+
+        {% for run in runs %} {% set status = run.status or "received" %} {#
+        current step: prefer the active timeline step, else the last completed
+        one #} {% set ns = namespace(current="", current_state="idle") %} {% for
+        step in run.timeline %} {% if step.state == "active" %}{% set ns.current
+        = step.label %}{% set ns.current_state = "active" %}{% endif %} {%
+        endfor %} {% if not ns.current %} {% for step in run.timeline %} {% if
+        step.state == "completed" %}{% set ns.current = step.label %}{% set
+        ns.current_state = "done" %}{% endif %} {% endfor %} {% endif %} {% set
+        session_url = run.remediation_session_url or run.triage_session_url or
+        run.review_session_url %} {% set session_label = "Create Fix" if
+        run.remediation_session_url else ("Triage" if run.triage_session_url
+        else ("Review" if run.review_session_url else "")) %}
+
+        <details class="run" id="run-{{ run.id }}" data-run-id="{{ run.id }}">
+          <summary class="run-summary">
+            <div class="row-grid">
+              <span class="chevron" aria-hidden="true">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <path
+                    d="M3 1.5L6.5 5L3 8.5"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+
+              <div class="span-mobile">
+                {% if run.issue_url %}
+                <a class="issue-num" href="{{ run.issue_url }}"
+                  >#{{ run.issue_number }}</a
+                >
+                {% else %}
+                <span class="issue-num" style="color: var(--text-2)"
+                  >#{{ run.issue_number or "—" }}</span
+                >
+                {% endif %}
+                <div class="issue-title" title="{{ run.issue_title or '' }}">
+                  {{ run.issue_title or "Untitled issue" }}
+                </div>
+              </div>
+
+              <div class="span-mobile">
+                <span class="badge {{ status_tones.get(status, 'neutral') }}"
+                  >{{ status_labels.get(status, status) }}</span
+                >
+              </div>
+
+              <div class="span-mobile">
+                {% if session_url %}
+                <a
+                  class="btn-devin"
+                  href="{{ session_url }}"
+                  target="_blank"
+                  rel="noopener"
+                  onclick="event.stopPropagation()"
+                >
+                  View
+                  <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M6 8L12.5 1.5M12.5 1.5H8.5M12.5 1.5V5.5M11 8V11.5C11 12.0523 10.5523 12.5 10 12.5H2.5C1.94772 12.5 1.5 12.0523 1.5 11.5V4C1.5 3.44772 1.94772 3 2.5 3H6"
+                      stroke="currentColor"
+                      stroke-width="1.3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+                {% else %}
+                <span class="cell-muted">—</span>
+                {% endif %}
+              </div>
+            </div>
+          </summary>
+
+          <div class="body-wrap">
+            <div class="body-inner">
+              <div class="run-body">
+                <div class="body-grid">
+                  <div class="timeline">
+                    {% for step in run.timeline %}
+                    <div class="step {{ step.state }}">
+                      <span class="node"></span>
+                      <span>{{ step.label }}</span>
+                    </div>
+                    {% endfor %}
+                  </div>
+
+                  <div>
+                    <div class="facts">
+                      <div class="fact">
+                        <div class="k">Triage decision</div>
+                        <div class="v">
+                          {{ decision_labels.get(run.triage_decision,
+                          run.triage_decision) if run.triage_decision else "—"
+                          }}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Risk</div>
+                        <div class="v">
+                          {{ run.triage_risk|capitalize if run.triage_risk else
+                          "—" }}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Category</div>
+                        <div class="v">
+                          {{ run.triage_category|capitalize if
+                          run.triage_category else "—" }}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">UI change</div>
+                        <div class="v">
+                          {{ "Yes" if run.ui_change else "No" }}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Pull request</div>
+                        <div class="v">
+                          {% if run.pr_url %}<a
+                            href="{{ run.pr_url }}"
+                            target="_blank"
+                            rel="noopener"
+                            >View PR</a
+                          >{% else %}—{% endif %}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Devin review</div>
+                        <div class="v">
+                          {{ run.review_status|replace("_", " ")|capitalize if
+                          run.review_status else "—" }}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Video proof</div>
+                        <div class="v">
+                          {% if run.video_url %}<a href="{{ run.video_url }}"
+                            >Recording</a
+                          >{% else %}—{% endif %}
+                        </div>
+                      </div>
+                      <div class="fact">
+                        <div class="k">Tests run</div>
+                        <div class="v">
+                          {% if run.tests_run %}{{ run.tests_run|join(", ") }}{%
+                          else %}—{% endif %}
+                        </div>
+                      </div>
+                    </div>
+
+                    {% if run.triage_summary %}
+                    <div class="prose markdown">
+                      <p class="prose-label">Triage</p>
+                      {{ run.triage_summary | markdown }}
+                    </div>
+                    {% endif %} {% if run.triage_recommended_fix %}
+                    <div class="prose markdown">
+                      <p class="prose-label">Recommended fix</p>
+                      {{ run.triage_recommended_fix | markdown }}
+                    </div>
+                    {% endif %} {% if run.summary %}
+                    <div class="prose markdown">
+                      {{ run.summary | markdown }}
+                    </div>
+                    {% endif %} {% if run.error %}
+                    <div class="callout blocker">
+                      <strong>Blocker.</strong> {{ run.error }}
+                      {% if run.retryable_failure %}
+                      <div class="callout-actions">
+                        <form
+                          method="post"
+                          action="{{ run.retryable_failure.action_url }}"
+                        >
+                          <button class="button retry" type="submit">
+                            {{ run.retryable_failure.label }}
+                          </button>
+                        </form>
+                      </div>
+                      {% endif %}
+                    </div>
+                    {% endif %} {% if run.hard_handoff %}
+                    <div class="callout waiting">
+                      <strong
+                        >Human-in-the-loop Devin launch recommended.</strong
+                      >
+                      <div class="sub">{{ run.hard_handoff.instruction }}</div>
+                      <div style="margin-top: 8px">
+                        <a
+                          class="session-link"
+                          href="{{ run.hard_handoff.session_url }}"
+                          target="_blank"
+                          rel="noopener"
+                          >Start this issue in Devin</a
+                        >
+                      </div>
+                    </div>
+                    {% endif %} {% if run.waiting %}
+                    <div class="callout waiting">
+                      <strong>Devin is waiting for instructions.</strong>
+                      <div class="sub">{{ run.waiting.instruction }}</div>
+                      {% if run.waiting.session_url %}
+                      <div style="margin-top: 8px">
+                        <a
+                          class="session-link"
+                          href="{{ run.waiting.session_url }}"
+                          target="_blank"
+                          rel="noopener"
+                          >Open {{ run.waiting.session_label }} session</a
+                        >
+                      </div>
+                      {% endif %}
+                      <form method="post" action="/runs/{{ run.id }}/continue">
+                        <button class="button" type="submit">
+                          Continue run
+                        </button>
+                      </form>
+                    </div>
+                    {% endif %}
+
+                    <div class="links">
+                      {% if run.review_session_url %}<a
+                        class="session-link"
+                        href="{{ run.review_session_url }}"
+                        target="_blank"
+                        rel="noopener"
+                        >Review session</a
+                      >{% endif %} {% if not (run.triage_session_url or
+                      run.remediation_session_url or run.review_session_url) %}
+                      <span class="cell-muted">No Devin sessions yet</span>
+                      {% endif %} {% if ns.current_state == "active" and not
+                      run.waiting %}
+                      <span class="working" aria-live="polite">
+                        Devin is working
+                        <span class="dots" aria-hidden="true"
+                          ><i></i><i></i><i></i
+                        ></span>
+                      </span>
+                      {% endif %}
+                    </div>
+
+                    <details class="events">
+                      <summary>
+                        Run events{% if run.events %} ({{ run.events|length
+                        }}){% endif %}
+                      </summary>
+                      {% if run.events %}
+                      <ul class="event-list">
+                        {% for event in run.events %}
+                        <li>
+                          <code
+                            class="evt {{ event_tones.get(event.event_type, 'neutral') }}"
+                            >{{ event.event_type }}</code
+                          >
+                          {{ event.message or "" }} {% if event.created_at
+                          %}<span class="time">{{ event.created_at }}</span>{%
+                          endif %}
+                        </li>
+                        {% endfor %}
+                      </ul>
+                      {% else %}
+                      <p class="cell-muted" style="margin: 8px 0 0">
+                        No events recorded yet.
+                      </p>
+                      {% endif %}
+                    </details>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+        {% endfor %} {% else %}
+        <div class="empty">
+          No Patch Adams runs yet. Add the <code>devin</code> label to an issue
+          or call <code>/demo/trigger</code>.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var KEY = "patchops-open-runs";
+        var read = function () {
+          try {
+            return new Set(JSON.parse(localStorage.getItem(KEY) || "[]"));
+          } catch (e) {
+            return new Set();
+          }
+        };
+        var write = function (set) {
+          localStorage.setItem(KEY, JSON.stringify(Array.from(set)));
+        };
+
+        // Restore open accordions before paint settles, with transitions suppressed.
+        var open = read();
+        document.querySelectorAll("details.run").forEach(function (el) {
+          if (open.has(el.dataset.runId)) el.open = true;
+          el.addEventListener("toggle", function () {
+            var set = read();
+            if (el.open) set.add(el.dataset.runId);
+            else set.delete(el.dataset.runId);
+            write(set);
+          });
+        });
+
+        // Links inside the row navigate without toggling the accordion.
+        document
+          .querySelectorAll("summary.run-summary a")
+          .forEach(function (a) {
+            a.addEventListener("click", function (e) {
+              e.stopPropagation();
+            });
+          });
+
+        // Play the entrance once per tab session; never on the 10s auto-refresh.
+        if (!sessionStorage.getItem("patchops-entered")) {
+          document.documentElement.classList.add("po-animate");
+          sessionStorage.setItem("patchops-entered", "1");
+        }
+
+        // Release the transition guard after first paint so open/close animates smoothly.
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            document.body.classList.remove("preload");
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

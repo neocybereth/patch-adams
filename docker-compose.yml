@@ -1,0 +1,10 @@
+services:
+  patch-adams:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      DEVIN_API_KEY: ${DEVIN_API_KEY}
+      DEVIN_ORG_ID: ${DEVIN_ORG_ID}
