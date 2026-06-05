@@ -843,18 +843,22 @@
     <div class="wrap">
       <header class="page">
         <h1>
-          <img class="brand-logo" src="/assets/logo.png" alt="Patch Adams" />
+          <img
+            class="brand-logo"
+            src="/app/assets/logo.png"
+            alt="Patch Adams"
+          />
         </h1>
         <p>Autonomous issue triage, remediation, and review control plane</p>
       </header>
 
       {% set status_labels = { "received": "Received", "triage_started":
       "Triaging", "triage_completed": "Triage complete", "remediation_started":
-      "Fixing", "pr_created": "PR opened", "review_started": "Under
-      review", "review_completed": "Review complete", "report_ready": "Report
-      ready", "verified": "Verified", "failed": "Failed", "needs_human": "Needs
-      human", "ignored": "Ignored" } %} {% set status_tones = { "received":
-      "neutral", "triage_started": "info", "triage_completed": "info",
+      "Fixing", "pr_created": "PR opened", "review_started": "Under review",
+      "review_completed": "Review complete", "report_ready": "Report ready",
+      "verified": "Verified", "failed": "Failed", "needs_human": "Needs human",
+      "ignored": "Ignored" } %} {% set status_tones = { "received": "neutral",
+      "triage_started": "info", "triage_completed": "info",
       "remediation_started": "info", "pr_created": "info", "review_started":
       "info", "review_completed": "info", "report_ready": "success", "verified":
       "success", "failed": "danger", "needs_human": "warn", "ignored": "neutral"
@@ -1077,8 +1081,8 @@
                     </div>
                     {% endif %} {% if run.error %}
                     <div class="callout blocker">
-                      <strong>Blocker.</strong> {{ run.error }}
-                      {% if run.retryable_failure %}
+                      <strong>Blocker.</strong> {{ run.error }} {% if
+                      run.retryable_failure %}
                       <div class="callout-actions">
                         <form
                           method="post"
