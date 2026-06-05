@@ -27,7 +27,7 @@ from app.runs import (
 )
 
 app = FastAPI()
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+app.mount("/assets", StaticFiles(directory="app/assets"), name="assets")
 templates = Jinja2Templates(directory="app/templates")
 
 HTML_TAG_RE = re.compile(r"</?([A-Za-z][A-Za-z0-9-]*)(?:\s[^>]*)?>")
